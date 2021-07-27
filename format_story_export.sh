@@ -46,11 +46,23 @@
 
 # FPP-349	FPP-23	FPP-23	Content for What Can I Expect - Change of copy	11	New copy change - yet to be estimated	Y	5.0
 
-
-# { print($1 OFS $4 OFS $10 OFS $3 OFS $12 OFS $13 OFS $14 OFS $5) }
-
-# awk -vFPAT='[^,]*|"[^"]*"' 'NR==FNR{F1[$1]=$0;next} F1[$1]=="" {print $0} F1[$1]!="" {print $0 FS "MATCHED" FS F1[$1]}' "$1" "$2" | awk -vFPAT='[^,]*|"[^"]*"' 'BEGIN { OFS = "\t"; } { print($1OFS$4OFS$10OFS$3OFS$12OFS$13OFS$14OFS$5) }' | sort -k5 -t, -g | tee "$3"
-
+# This is the output format order
 
 # JIRA STORY ID	JIRA EPIC ID	Epic Name	User Story	Sprint	Notes	MVP Must Haves	Story Points
-awk -vFPAT='[^,]*|"[^"]*"' 'NR==FNR{F1[$1]=$0;next} F1[$1]=="" {print $0} F1[$1]!="" {print $0 FS "MATCHED" FS F1[$1]}' "$1" "$2" | awk -vFPAT='[^,]*|"[^"]*"' 'BEGIN { OFS = "\t"; } { print($1 OFS $4 OFS $10 OFS $3 OFS $12 OFS $13 OFS $14 OFS $5) }' | tee "$3"
+# $1 = Jira ID
+# OFS
+# $4 = Epic ID
+# OFS
+# OFS
+# $3 = User Story
+# OFS
+# $10 = Sprint
+# OFS
+# OFS
+# $12 = MVP
+# OFS
+# $13 = Points
+
+# This was the original version using the export and the sheet
+# awk -vFPAT='[^,]*|"[^"]*"' 'NR==FNR{F1[$1]=$0;next} F1[$1]=="" {print $0} F1[$1]!="" {print $0 FS "MATCHED" FS F1[$1]}' "$1" "$2" | awk -vFPAT='[^,]*|"[^"]*"' 'BEGIN { OFS = "\t"; } { print($1 OFS $4 OFS $10 OFS $3 OFS $12 OFS $13 OFS $14 OFS $5) }' | tee "$3"
+awk -vFPAT='[^,]*|"[^"]*"' 'NR==FNR{F1[$1]=$0;next} F1[$1]=="" {print $0} F1[$1]!="" {print $0 FS "MATCHED" FS F1[$1]}' "$1" "$2" | tee 'temp.csv' | awk -vFPAT='[^,]*|"[^"]*"' 'BEGIN { OFS = "\t"; } { print($1 OFS $4 OFS OFS $3 OFS $10 OFS OFS $12 OFS $13) }' | tee "$3"
